@@ -1,41 +1,271 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#F7F4EC" /><title>Klar — Deutsch. Klar. Einfach.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Sixtyfour&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="paper-noise"></div><div class="fraktur-mark">ß</div>
-  <nav class="nav grid-wrap"><a href="#top" class="logo"><i class="gender-dots"><b></b><b></b><b></b></i>KLAR<span>®</span></a><div class="nav-links"><a href="#learn">MODULES</a><a href="#method">METHOD</a><a href="#progress">PROGRESS</a></div><button class="mode-toggle" id="modeToggle" aria-label="Toggle dark mode"><i></i><span>MODE</span></button></nav>
-  <main id="top">
-    <section class="hero grid-wrap tech-section">
-      <div class="spec top-spec">[ KLAR / v1.0 ]<br>[ CEFR — A1 ]</div><div class="cross top-cross">+</div>
-      <p class="eyebrow">GERMAN, WITHOUT THE FOG.</p><h1>Deutsch.<br><em>Klar.</em> Einfach.</h1>
-      <p class="hero-copy">A precise little system for learning German from zero. Less guessing. More saying things that are actually useful.</p>
-      <div class="hero-actions"><button class="signal-button" id="heroStart">START MODULE 01 <span>→</span></button><button class="quiet-button" id="previewButton">HOW IT WORKS <span>↓</span></button></div>
-      <div class="hero-foot"><span>[ BUILT FOR BEGINNERS ]</span><span>01—03 / FIRST CONTACT</span></div>
-      <div class="hero-grid-art" aria-hidden="true"><div class="grid-label">A1 // START</div><div class="grid-dots"></div><div class="disc disc-one"></div><div class="disc disc-two"></div><div class="art-cross">+</div></div>
-    </section>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f4ec" />
+    <meta
+      name="description"
+      content="Klar — a clear, structured way to learn German from A1."
+    />
+    <title>Klar — Learn German clearly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Sixtyfour&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="paper-noise"></div>
+    <header class="site-header">
+      <nav class="shell nav" aria-label="Main navigation">
+        <a class="logo" href="#home" aria-label="Klar home">
+          <span class="gender-mark" aria-hidden="true"
+            ><i></i><i></i><i></i></span
+          >Klar
+        </a>
+        <div class="nav-links">
+          <button data-view="learn">Course</button>
+          <button data-view="review">Review</button>
+          <button data-view="practice">Pronounce</button>
+        </div>
+        <div class="nav-actions">
+          <button
+            class="icon-button"
+            id="themeButton"
+            title="Toggle colour mode"
+            aria-label="Toggle colour mode"
+          >
+            <span></span>
+          </button>
+          <button
+            class="profile-button"
+            data-view="progress"
+            title="View progress"
+          >
+            0%
+          </button>
+        </div>
+      </nav>
+    </header>
 
-    <section class="ticker"><div>PRECISION OVER PERFECTION <b>●</b> SPEAK BEFORE YOU FEEL READY <b>●</b> ONE CLEAR STEP AT A TIME <b>●</b> PRECISION OVER PERFECTION <b>●</b> SPEAK BEFORE YOU FEEL READY <b>●</b></div></section>
+    <main class="shell" id="app" tabindex="-1"></main>
 
-    <section class="learn grid-wrap tech-section" id="learn">
-      <div class="section-index">01 / FIRST CONTACT</div><div class="cross section-cross">+</div>
-      <header class="section-heading"><div><p class="eyebrow">MODULE 01 — GREETINGS</p><h2>Say who<br>you are.</h2></div><p>Learn the shape of a real introduction, then build one yourself. The grammar comes after the meaning—not before.</p></header>
-      <div class="lesson-layout">
-        <article class="reading-pane"><div class="pane-label">[ LISTEN / REPEAT ]</div><div class="faint-word">HALLO</div><button class="glyph-button" id="playGreeting" aria-label="Play German pronunciation"><span>▶</span><i></i><i></i></button><p class="german-line">Hallo, ich bin Yash.</p><p class="translation">Hello, I’m Yash.</p><button class="break-button" id="revealBreakdown">DECODE PHRASE <span>+</span></button><div class="breakdown" id="breakdown"><span><b>Hallo</b> hello</span><span><b>ich bin</b> I am</span><span><b>Yash</b> Yash</span></div></article>
-        <article class="interactive-pane"><div class="pane-label">[ ASSEMBLE / 01 ]</div><h3>“I am from India.”</h3><p class="instruction">Build it. Tap a piece to remove it.</p><div class="answer-slot" id="answerSlot"><span>AWAITING INPUT</span></div><div class="word-bank" id="wordBank"><button data-word="Ich">Ich</button><button data-word="komme">komme</button><button data-word="aus">aus</button><button data-word="Indien.">Indien.</button></div><div class="builder-footer"><button class="reset" id="resetSentence">RESET</button><button class="signal-button small" id="checkSentence">VERIFY <span>→</span></button></div><p class="feedback" id="sentenceFeedback" aria-live="polite"></p></article>
-      </div>
-      <div class="gender-legend"><span>GRAMMAR SIGNALS →</span><span><i class="dot der"></i> DER / masculine</span><span><i class="dot die"></i> DIE / feminine</span><span><i class="dot das"></i> DAS / neutral</span></div>
-    </section>
+    <footer class="shell footer">
+      <a class="logo" href="#home"
+        ><span class="gender-mark"><i></i><i></i><i></i></span>Klar</a
+      >
+      <span>German, made clear.</span>
+      <span>A1 course · Built for deliberate practice</span>
+    </footer>
 
-    <section class="method grid-wrap tech-section" id="method"><div class="section-index">02 / THE SYSTEM</div><div class="method-title"><p class="eyebrow">NOT A GAME. A LOOP.</p><h2>Notice.<br>Use. Keep.</h2></div><div class="method-list"><article><span>01</span><div><h3>Notice the pattern.</h3><p>Every phrase is a small piece of a system. We show you both.</p></div><b>↘</b></article><article><span>02</span><div><h3>Use it immediately.</h3><p>Recall beats recognition. You make the language, not just consume it.</p></div><b>↘</b></article><article><span>03</span><div><h3>Meet it again.</h3><p>Short reviews arrive before a word slips away.</p></div><b>↘</b></article></div></section>
+    <template id="homeTemplate">
+      <section class="hero technical-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">A1 GERMAN COURSE · 30 LESSONS</p>
+          <h1>German,<br /><em>made clear.</em></h1>
+          <p class="lede">
+            A structured A1 course for building useful German from the first
+            hello to everyday conversations.
+          </p>
+          <div class="hero-actions">
+            <button class="button button-signal" data-action="continue">
+              Continue learning <span>→</span>
+            </button>
+            <button class="button button-outline" data-view="learn">
+              View the course
+            </button>
+          </div>
+          <div class="course-stats">
+            <span><b id="homeLessonsDone">00</b> lessons completed</span
+            ><span><b>30</b> focused lessons</span
+            ><span><b id="homeWordsSeen">000</b> words practised</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="art-label">KLAR / A1</span>
+          <div class="art-disc large"></div>
+          <div class="art-disc small"></div>
+          <div class="dot-field"></div>
+          <span class="cross one">+</span><span class="cross two">+</span>
+        </div>
+      </section>
 
-    <section class="progress-section" id="progress"><div class="grid-wrap progress-layout"><div><p class="eyebrow">03 / YOUR READOUT</p><h2>Small inputs.<br>Real change.</h2><p class="progress-copy">No shame streaks. Just a record of the moments you showed up.</p><button class="outline-button" id="saveProgress">LOG TODAY <span>→</span></button><p class="save-message" id="saveMessage"></p></div><div class="dashboard"><div class="dash-head"><div><span class="device-dot"></span> KLAR / LOCAL</div><span>A1—00</span></div><div class="profile"><div class="avatar">Y</div><div><b id="studentName">YASH</b><span>BEGINNER UNIT</span></div><span class="streak"><i>✦</i> <b id="streak">0</b></span></div><div class="dot-readout"><span>LESSONS LOGGED</span><b id="progressText">00 / 03</b></div><div class="lesson-dots" id="lessonDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="dash-bottom"><span>NOW PLAYING</span><b>01 — ICH BIN…</b></div></div></div></section>
-    <section class="cta grid-wrap"><p class="eyebrow">SYSTEM READY.</p><h2>Make German<br>feel <em>clear.</em></h2><button class="signal-button" id="bottomStart">BEGIN NOW <span>→</span></button></section>
-  </main>
-  <footer class="grid-wrap"><a href="#top" class="logo"><i class="gender-dots"><b></b><b></b><b></b></i>KLAR</a><span>DESIGNED FOR THE FIRST CUSTOMER: YASH.</span><span>© 2026 / LUCKNOW → DEUTSCHLAND</span></footer><div id="toast" class="toast" role="status"></div><script src="app.js"></script>
-</body></html>
+      <section class="continue-section section-block">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p>
+            <h2>Your next step.</h2>
+          </div>
+          <button class="text-button" data-view="learn">All lessons →</button>
+        </div>
+        <div id="nextLessonCard"></div>
+      </section>
+
+      <section class="feature-grid section-block">
+        <article>
+          <span class="feature-index">01</span>
+          <h3>Learn in context</h3>
+          <p>Words arrive inside phrases and situations, not isolated lists.</p>
+        </article>
+        <article>
+          <span class="feature-index">02</span>
+          <h3>See the system</h3>
+          <p>Grammar is explained simply, then used immediately.</p>
+        </article>
+        <article>
+          <span class="feature-index">03</span>
+          <h3>Keep what matters</h3>
+          <p>Review your own vocabulary deck whenever you have five minutes.</p>
+        </article>
+      </section>
+    </template>
+
+    <template id="learnTemplate">
+      <section class="page-intro">
+        <p class="eyebrow">KLAR / CURRICULUM</p>
+        <h1>A1, from the ground up.</h1>
+        <p class="lede">
+          Thirty compact lessons covering the language you need to introduce
+          yourself, navigate daily life, and make simple plans.
+        </p>
+        <div class="course-meter">
+          <div>
+            <span id="courseProgressLabel">0 of 30 complete</span
+            ><span id="courseProgressPercent">0%</span>
+          </div>
+          <i><b id="courseProgressBar"></b></i>
+        </div>
+      </section>
+      <section id="curriculum" class="curriculum"></section>
+    </template>
+
+    <template id="reviewTemplate">
+      <section class="page-intro review-intro">
+        <p class="eyebrow">YOUR WORD BANK</p>
+        <h1>Keep it close.</h1>
+        <p class="lede">
+          Review words from the lessons you have opened. Say the answer before
+          turning the card.
+        </p>
+      </section>
+      <section class="review-layout">
+        <article
+          class="flashcard"
+          id="flashcard"
+          tabindex="0"
+          role="button"
+          aria-label="Flip flashcard"
+        >
+          <div class="flashcard-inner">
+            <div class="flashcard-face flashcard-front">
+              <span id="flashGenderDot" class="dot das"></span>
+              <p class="card-label">GERMAN</p>
+              <h2 id="flashGerman">Hallo</h2>
+              <button
+                class="speaker small-speaker"
+                data-speak-target="flashGerman"
+                aria-label="Listen to word"
+              >
+                ◖))</button
+              ><span class="flip-hint">click to reveal</span>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <p class="card-label">ENGLISH</p>
+              <h2 id="flashEnglish">hello</h2>
+              <p id="flashNote" class="flash-note">greeting</p>
+              <span class="flip-hint">click to return</span>
+            </div>
+          </div>
+        </article>
+        <aside class="review-side">
+          <p class="eyebrow">REVIEW DECK</p>
+          <div class="review-count">
+            <b id="deckPosition">01</b><span>/</span><b id="deckTotal">00</b>
+          </div>
+          <p id="deckStatus">Start with the words from your first lesson.</p>
+          <div class="review-controls">
+            <button class="button button-outline" id="previousCard">←</button
+            ><button class="button button-signal" id="nextCard">
+              Next word →
+            </button>
+          </div>
+        </aside>
+      </section>
+    </template>
+
+    <template id="practiceTemplate">
+      <section class="page-intro">
+        <p class="eyebrow">PRONUNCIATION TOOL</p>
+        <h1>Type it.<br /><em>Hear it.</em></h1>
+        <p class="lede">
+          Paste or type any German word or phrase. Klar will use your browser’s
+          German voice to say it aloud.
+        </p>
+      </section>
+      <section class="pronunciation-tool technical-panel">
+        <label for="pronunciationInput">GERMAN INPUT</label>
+        <textarea
+          id="pronunciationInput"
+          rows="4"
+          lang="de"
+          placeholder="z. B. Wie geht es dir?"
+        ></textarea>
+        <div class="pronunciation-actions">
+          <button class="button button-signal" id="pronounceButton">
+            Play pronunciation <span>▶</span></button
+          ><button class="button button-outline" id="slowPronounceButton">
+            Play slowly
+          </button>
+        </div>
+        <p class="tool-note">
+          Tip: use short phrases, listen twice, then repeat out loud. Your
+          browser needs speech synthesis enabled.
+        </p>
+      </section>
+      <section class="quick-phrases">
+        <p class="eyebrow">TRY ONE</p>
+        <div id="quickPhrases"></div>
+      </section>
+    </template>
+
+    <template id="progressTemplate">
+      <section class="page-intro">
+        <p class="eyebrow">YOUR COURSE READOUT</p>
+        <h1>Quiet progress.<br /><em>Real progress.</em></h1>
+      </section>
+      <section class="progress-grid">
+        <article class="metric-card">
+          <span>LESSONS COMPLETE</span><b id="metricLessons">00</b
+          ><small>/ 30</small>
+        </article>
+        <article class="metric-card">
+          <span>WORDS IN REVIEW</span><b id="metricWords">000</b>
+        </article>
+        <article class="metric-card">
+          <span>COURSE PROGRESS</span><b id="metricPercent">00%</b>
+        </article>
+      </section>
+      <section class="progress-visual">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">A1 COURSE MAP</p>
+            <h2>Every lesson counts.</h2>
+          </div>
+        </div>
+        <div id="progressDots" class="progress-dots"></div>
+      </section>
+      <section class="reset-zone">
+        <p>Need a fresh start? This only clears data stored in this browser.</p>
+        <button id="resetProgress" class="text-button danger">
+          Reset local progress
+        </button>
+      </section>
+    </template>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a215e8a47cbbcd8c',t:'MTc4NTA5NTE2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
