@@ -1,93 +1,41 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#101010" />
-  <title>hallo. — Learn German, properly</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F7F4EC" /><title>Klar — Deutsch. Klar. Einfach.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Sixtyfour&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="noise"></div>
-  <div class="orb orb-one"></div><div class="orb orb-two"></div>
-
-  <nav class="nav wrap">
-    <a class="brand" href="#top" aria-label="hallo home"><span class="brand-dot"></span>hallo<span class="period">.</span></a>
-    <div class="nav-links"><a href="#learn">learn</a><a href="#method">method</a><a href="#progress">progress</a></div>
-    <button class="tiny-button" id="navStart">start learning <span>↗</span></button>
-  </nav>
-
+  <div class="paper-noise"></div><div class="fraktur-mark">ß</div>
+  <nav class="nav grid-wrap"><a href="#top" class="logo"><i class="gender-dots"><b></b><b></b><b></b></i>KLAR<span>®</span></a><div class="nav-links"><a href="#learn">MODULES</a><a href="#method">METHOD</a><a href="#progress">PROGRESS</a></div><button class="mode-toggle" id="modeToggle" aria-label="Toggle dark mode"><i></i><span>MODE</span></button></nav>
   <main id="top">
-    <section class="hero wrap">
-      <div class="eyebrow"><span class="pulse"></span> A1 German, no boring bits</div>
-      <h1>German that<br><em>actually sticks.</em></h1>
-      <p class="hero-copy">Tiny lessons. Real phrases. Immediate feedback. Built for people who want to say more than <i>“Guten Tag”</i> and disappear.</p>
-      <div class="hero-actions">
-        <button class="main-button" id="heroStart">begin your first lesson <span>→</span></button>
-        <button class="text-button" id="previewButton">see how it works <span>↓</span></button>
-      </div>
-      <div class="hero-meta"><span>01 / beginner-first</span><span>Made for your future self in Berlin</span></div>
-      <div class="word-cloud" aria-hidden="true"><span>Hallo</span><span>bitte</span><span>schön</span><span>ich</span><span>danke</span><span>lernen</span></div>
+    <section class="hero grid-wrap tech-section">
+      <div class="spec top-spec">[ KLAR / v1.0 ]<br>[ CEFR — A1 ]</div><div class="cross top-cross">+</div>
+      <p class="eyebrow">GERMAN, WITHOUT THE FOG.</p><h1>Deutsch.<br><em>Klar.</em> Einfach.</h1>
+      <p class="hero-copy">A precise little system for learning German from zero. Less guessing. More saying things that are actually useful.</p>
+      <div class="hero-actions"><button class="signal-button" id="heroStart">START MODULE 01 <span>→</span></button><button class="quiet-button" id="previewButton">HOW IT WORKS <span>↓</span></button></div>
+      <div class="hero-foot"><span>[ BUILT FOR BEGINNERS ]</span><span>01—03 / FIRST CONTACT</span></div>
+      <div class="hero-grid-art" aria-hidden="true"><div class="grid-label">A1 // START</div><div class="grid-dots"></div><div class="disc disc-one"></div><div class="disc disc-two"></div><div class="art-cross">+</div></div>
     </section>
 
-    <section class="ticker" aria-label="Course topics"><div class="ticker-track">SPEAK WITHOUT FREEZING <b>✳</b> UNDERSTAND THE PATTERNS <b>✳</b> BUILD A DAILY HABIT <b>✳</b> SPEAK WITHOUT FREEZING <b>✳</b> UNDERSTAND THE PATTERNS <b>✳</b> BUILD A DAILY HABIT <b>✳</b></div></section>
+    <section class="ticker"><div>PRECISION OVER PERFECTION <b>●</b> SPEAK BEFORE YOU FEEL READY <b>●</b> ONE CLEAR STEP AT A TIME <b>●</b> PRECISION OVER PERFECTION <b>●</b> SPEAK BEFORE YOU FEEL READY <b>●</b></div></section>
 
-    <section class="learn-section wrap" id="learn">
-      <div class="section-head">
-        <div><div class="eyebrow">your first tiny win</div><h2>Lesson 01.<br>Meet someone.</h2></div>
-        <p>Don’t memorise a dusty word list. Use a phrase, understand it, then make it yours.</p>
+    <section class="learn grid-wrap tech-section" id="learn">
+      <div class="section-index">01 / FIRST CONTACT</div><div class="cross section-cross">+</div>
+      <header class="section-heading"><div><p class="eyebrow">MODULE 01 — GREETINGS</p><h2>Say who<br>you are.</h2></div><p>Learn the shape of a real introduction, then build one yourself. The grammar comes after the meaning—not before.</p></header>
+      <div class="lesson-layout">
+        <article class="reading-pane"><div class="pane-label">[ LISTEN / REPEAT ]</div><div class="faint-word">HALLO</div><button class="glyph-button" id="playGreeting" aria-label="Play German pronunciation"><span>▶</span><i></i><i></i></button><p class="german-line">Hallo, ich bin Yash.</p><p class="translation">Hello, I’m Yash.</p><button class="break-button" id="revealBreakdown">DECODE PHRASE <span>+</span></button><div class="breakdown" id="breakdown"><span><b>Hallo</b> hello</span><span><b>ich bin</b> I am</span><span><b>Yash</b> Yash</span></div></article>
+        <article class="interactive-pane"><div class="pane-label">[ ASSEMBLE / 01 ]</div><h3>“I am from India.”</h3><p class="instruction">Build it. Tap a piece to remove it.</p><div class="answer-slot" id="answerSlot"><span>AWAITING INPUT</span></div><div class="word-bank" id="wordBank"><button data-word="Ich">Ich</button><button data-word="komme">komme</button><button data-word="aus">aus</button><button data-word="Indien.">Indien.</button></div><div class="builder-footer"><button class="reset" id="resetSentence">RESET</button><button class="signal-button small" id="checkSentence">VERIFY <span>→</span></button></div><p class="feedback" id="sentenceFeedback" aria-live="polite"></p></article>
       </div>
-
-      <div class="lesson-grid">
-        <article class="lesson-card greeting-card">
-          <div class="card-top"><span class="card-kicker">LISTEN + REPEAT</span><span class="lesson-pill">02 min</span></div>
-          <div class="sound-rings"><button class="play-button" id="playGreeting" aria-label="Play pronunciation">▶</button><span class="ring ring-a"></span><span class="ring ring-b"></span></div>
-          <p class="german-line">Hallo, ich bin Yash.</p>
-          <p class="translation">Hello, I’m Yash.</p>
-          <button class="repeat-button" id="revealBreakdown">why does this work? <span>+</span></button>
-          <div class="breakdown" id="breakdown"><span><b>Hallo</b> = hello</span><span><b>ich bin</b> = I am</span><span><b>Yash</b> = Yash</span></div>
-        </article>
-
-        <article class="lesson-card builder-card">
-          <div class="card-top"><span class="card-kicker">BUILD THE SENTENCE</span><span class="lesson-pill dark">01 / 01</span></div>
-          <h3>How do you say<br>“I am from India”?</h3>
-          <div class="answer-slot" id="answerSlot"><span>tap words below</span></div>
-          <div class="word-bank" id="wordBank">
-            <button data-word="Ich">Ich</button><button data-word="komme">komme</button><button data-word="aus">aus</button><button data-word="Indien.">Indien.</button>
-          </div>
-          <div class="builder-footer"><button class="reset" id="resetSentence">reset</button><button class="check-button" id="checkSentence">check →</button></div>
-          <p class="feedback" id="sentenceFeedback" aria-live="polite"></p>
-        </article>
-      </div>
+      <div class="gender-legend"><span>GRAMMAR SIGNALS →</span><span><i class="dot der"></i> DER / masculine</span><span><i class="dot die"></i> DIE / feminine</span><span><i class="dot das"></i> DAS / neutral</span></div>
     </section>
 
-    <section class="method wrap" id="method">
-      <div class="method-intro"><div class="eyebrow">a better loop</div><h2>Your brain likes<br>small victories.</h2><p>We use attention, active recall, and just enough friction to make every word feel earned.</p></div>
-      <div class="method-list">
-        <article><span>01</span><div><h3>Notice</h3><p>See the pattern in a phrase you’d actually use.</p></div><b>↘</b></article>
-        <article><span>02</span><div><h3>Use it</h3><p>Build, speak, and choose—not just tap “continue.”</p></div><b>↘</b></article>
-        <article><span>03</span><div><h3>Keep it</h3><p>Come back at the right moment, before it fades.</p></div><b>↘</b></article>
-      </div>
-    </section>
+    <section class="method grid-wrap tech-section" id="method"><div class="section-index">02 / THE SYSTEM</div><div class="method-title"><p class="eyebrow">NOT A GAME. A LOOP.</p><h2>Notice.<br>Use. Keep.</h2></div><div class="method-list"><article><span>01</span><div><h3>Notice the pattern.</h3><p>Every phrase is a small piece of a system. We show you both.</p></div><b>↘</b></article><article><span>02</span><div><h3>Use it immediately.</h3><p>Recall beats recognition. You make the language, not just consume it.</p></div><b>↘</b></article><article><span>03</span><div><h3>Meet it again.</h3><p>Short reviews arrive before a word slips away.</p></div><b>↘</b></article></div></section>
 
-    <section class="progress-section" id="progress">
-      <div class="wrap progress-layout">
-        <div><div class="eyebrow light">your little corner of germany</div><h2>One phrase<br>at a time.</h2><p>Your progress lives here. No streak guilt. Just a clear next step.</p><button class="light-button" id="saveProgress">save today’s progress <span>→</span></button><p class="save-message" id="saveMessage"></p></div>
-        <div class="progress-card">
-          <div class="profile-row"><div class="avatar">Y</div><div><b id="studentName">Yash</b><span>A1 · Starting line</span></div><span class="fire">✦ <i id="streak">0</i></span></div>
-          <div class="progress-line"><div id="progressFill"></div></div><div class="progress-label"><span>Today</span><b id="progressText">0 / 3 moments</b></div>
-          <div class="mini-lessons"><div class="mini complete"><span>✓</span> Hallo, ich bin…</div><div class="mini active"><span>→</span> Ich komme aus…</div><div class="mini"><span>03</span> Wie geht’s?</div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta wrap"><div><div class="eyebrow">your move</div><h2>Say <em>hallo</em><br>to day one.</h2></div><button class="main-button" id="bottomStart">start learning <span>→</span></button></section>
+    <section class="progress-section" id="progress"><div class="grid-wrap progress-layout"><div><p class="eyebrow">03 / YOUR READOUT</p><h2>Small inputs.<br>Real change.</h2><p class="progress-copy">No shame streaks. Just a record of the moments you showed up.</p><button class="outline-button" id="saveProgress">LOG TODAY <span>→</span></button><p class="save-message" id="saveMessage"></p></div><div class="dashboard"><div class="dash-head"><div><span class="device-dot"></span> KLAR / LOCAL</div><span>A1—00</span></div><div class="profile"><div class="avatar">Y</div><div><b id="studentName">YASH</b><span>BEGINNER UNIT</span></div><span class="streak"><i>✦</i> <b id="streak">0</b></span></div><div class="dot-readout"><span>LESSONS LOGGED</span><b id="progressText">00 / 03</b></div><div class="lesson-dots" id="lessonDots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="dash-bottom"><span>NOW PLAYING</span><b>01 — ICH BIN…</b></div></div></div></section>
+    <section class="cta grid-wrap"><p class="eyebrow">SYSTEM READY.</p><h2>Make German<br>feel <em>clear.</em></h2><button class="signal-button" id="bottomStart">BEGIN NOW <span>→</span></button></section>
   </main>
-  <footer class="wrap"><a class="brand" href="#top"><span class="brand-dot"></span>hallo<span class="period">.</span></a><span>Built by a learner, for learners. 2026</span><span>Made with curiosity + questionable amounts of caffeine.</span></footer>
-  <div class="toast" id="toast" role="status"></div>
-  <script src="app.js"></script>
-</body>
-</html>
+  <footer class="grid-wrap"><a href="#top" class="logo"><i class="gender-dots"><b></b><b></b><b></b></i>KLAR</a><span>DESIGNED FOR THE FIRST CUSTOMER: YASH.</span><span>© 2026 / LUCKNOW → DEUTSCHLAND</span></footer><div id="toast" class="toast" role="status"></div><script src="app.js"></script>
+</body></html>
