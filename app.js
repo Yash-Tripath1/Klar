@@ -20,6 +20,7 @@ const state = {
   completed: stored.completed || [],
   opened: stored.opened || [],
   theme: stored.theme || "light",
+  level: stored.level || "A1",
   deckIndex: 0,
 };
 
@@ -30,6 +31,7 @@ function saveState() {
       completed: state.completed,
       opened: state.opened,
       theme: state.theme,
+      level: state.level,
     }),
   );
 }
@@ -64,6 +66,12 @@ function renderHome() {
   document.querySelector("#homeWordsSeen").textContent = String(
     knownWords().length,
   ).padStart(3, "0");
+  document.querySelectorAll("[data-select-level]").forEach((button) => {
+    button.classList.toggle(
+      "active",
+      button.dataset.selectLevel === state.level,
+    );
+  });
 
   const next =
     allLessons.find((lesson) => !state.completed.includes(lesson.id)) ||
@@ -82,6 +90,11 @@ function lessonCard(lesson, featured = false) {
 }
 
 function renderLearn() {
+  if (state.level === "A2") {
+    renderA2Roadmap();
+    return;
+  }
+
   mountTemplate("learn");
   document.querySelector("#courseProgressLabel").textContent =
     `${state.completed.length} of ${allLessons.length} complete`;
@@ -99,6 +112,28 @@ function renderLearn() {
       <div class="lesson-grid">${unit.lessons.map((lesson) => lessonCard(lesson)).join("")}</div>
     </section>`,
   ).join("");
+}
+
+function renderA2Roadmap() {
+  app.innerHTML = `
+    <section class="page-intro a2-intro">
+      <p class="eyebrow">KLAR / A2 ROADMAP</p>
+      <h1>Make German<br /><em>more yours.</em></h1>
+      <p class="lede">A2 is where you stop assembling survival phrases and start handling everyday life with more independence. The complete A2 lesson library is the next content release.</p>
+      <button class="button button-outline" data-select-level="A1">← Switch to A1 course</button>
+    </section>
+    <section class="a2-roadmap">
+      ${A2_ROADMAP.map(
+        (unit) => `
+        <article class="a2-unit-card">
+          <p>${unit.unit}</p>
+          <h2>${unit.title}</h2>
+          <ol>${unit.lessons.map((lesson) => `<li>${lesson}</li>`).join("")}</ol>
+          <span>5 lessons planned</span>
+        </article>`,
+      ).join("")}
+      <div class="a2-note"><strong>A2 is mapped.</strong><span>Next: lesson writing, native audio, and exercises.</span></div>
+    </section>`;
 }
 
 function renderLesson(lessonId) {
@@ -285,6 +320,36 @@ function route(view) {
 }
 
 document.addEventListener("click", (event) => {
+  const levelButton = event.target.closest("[data-select-level]");
+  if (levelButton) {
+    state.level = levelButton.dataset.selectLevel;
+    saveState();
+    if (levelButton.closest(".level-picker")) {
+      document.querySelectorAll("[data-select-level]").forEach((button) => {
+        button.classList.toggle(
+          "active",
+          button.dataset.selectLevel === state.level,
+        );
+      });
+    } else {
+      renderLearn();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    return;
+  }
+  const actionButton = event.target.closest("[data-action='continue']");
+  if (actionButton) {
+    if (state.level === "A2") {
+      renderLearn();
+    } else {
+      const nextLesson =
+        allLessons.find((lesson) => !state.completed.includes(lesson.id)) ||
+        allLessons[0];
+      renderLesson(nextLesson.id);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
   const viewButton = event.target.closest("[data-view]");
   if (viewButton) {
     route(viewButton.dataset.view);

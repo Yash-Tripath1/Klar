@@ -12,10 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Sixtyfour&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="theme-overrides.css" />
   </head>
   <body>
     <div class="paper-noise"></div>
@@ -70,6 +71,17 @@
             A structured A1 course for building useful German from the first
             hello to everyday conversations.
           </p>
+          <div class="level-picker" aria-label="Choose your German level">
+            <p class="picker-label">CHOOSE YOUR STARTING LEVEL</p>
+            <div class="level-options">
+              <button class="level-option active" data-select-level="A1">
+                <strong>A1</strong><span>Starting from zero</span>
+              </button>
+              <button class="level-option" data-select-level="A2">
+                <strong>A2</strong><span>Build everyday fluency</span>
+              </button>
+            </div>
+          </div>
           <div class="hero-actions">
             <button class="button button-signal" data-action="continue">
               Continue learning <span>→</span>
@@ -266,6 +278,7 @@
     </template>
 
     <script src="data.js"></script>
+    <script src="a2-data.js"></script>
     <script src="app.js"></script>
-  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a215e8a47cbbcd8c',t:'MTc4NTA5NTE2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2199e410dcca346',t:'MTc4NTEzNDA2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
