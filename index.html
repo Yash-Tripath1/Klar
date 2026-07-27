@@ -3,282 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7f4ec" />
+    <meta name="theme-color" content="#f6f6f2" />
     <meta
       name="description"
-      content="Klar — a clear, structured way to learn German from A1."
+      content="Klar — a calm, structured way to learn German."
     />
-    <title>Klar — Learn German clearly</title>
+    <title>Klar — Learn German</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="theme-overrides.css" />
   </head>
   <body>
-    <div class="paper-noise"></div>
-    <header class="site-header">
-      <nav class="shell nav" aria-label="Main navigation">
-        <a class="logo" href="#home" aria-label="Klar home">
-          <span class="gender-mark" aria-hidden="true"
-            ><i></i><i></i><i></i></span
-          >Klar
-        </a>
-        <div class="nav-links">
-          <button data-view="learn">Course</button>
-          <button data-view="review">Review</button>
-          <button data-view="practice">Pronounce</button>
-        </div>
-        <div class="nav-actions">
-          <button
-            class="icon-button"
-            id="themeButton"
-            title="Toggle colour mode"
-            aria-label="Toggle colour mode"
-          >
-            <span></span>
-          </button>
-          <button
-            class="profile-button"
-            data-view="progress"
-            title="View progress"
-          >
-            0%
-          </button>
-        </div>
-      </nav>
-    </header>
-
-    <main class="shell" id="app" tabindex="-1"></main>
-
-    <footer class="shell footer">
-      <a class="logo" href="#home"
-        ><span class="gender-mark"><i></i><i></i><i></i></span>Klar</a
-      >
-      <span>German, made clear.</span>
-      <span>A1 course · Built for deliberate practice</span>
-    </footer>
-
-    <template id="homeTemplate">
-      <section class="hero technical-panel">
-        <div class="hero-copy">
-          <p class="eyebrow">A1 GERMAN COURSE · 30 LESSONS</p>
-          <h1>German,<br /><em>made clear.</em></h1>
-          <p class="lede">
-            A structured A1 course for building useful German from the first
-            hello to everyday conversations.
-          </p>
-          <div class="level-picker" aria-label="Choose your German level">
-            <p class="picker-label">CHOOSE YOUR STARTING LEVEL</p>
-            <div class="level-options">
-              <button class="level-option active" data-select-level="A1">
-                <strong>A1</strong><span>Starting from zero</span>
-              </button>
-              <button class="level-option" data-select-level="A2">
-                <strong>A2</strong><span>Build everyday fluency</span>
-              </button>
-            </div>
-          </div>
-          <div class="hero-actions">
-            <button class="button button-signal" data-action="continue">
-              Continue learning <span>→</span>
-            </button>
-            <button class="button button-outline" data-view="learn">
-              View the course
-            </button>
-          </div>
-          <div class="course-stats">
-            <span><b id="homeLessonsDone">00</b> lessons completed</span
-            ><span><b>30</b> focused lessons</span
-            ><span><b id="homeWordsSeen">000</b> words practised</span>
-          </div>
-        </div>
-        <div class="hero-art" aria-hidden="true">
-          <span class="art-label">KLAR / A1</span>
-          <div class="art-disc large"></div>
-          <div class="art-disc small"></div>
-          <div class="dot-field"></div>
-          <span class="cross one">+</span><span class="cross two">+</span>
-        </div>
-      </section>
-
-      <section class="continue-section section-block">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p>
-            <h2>Your next step.</h2>
-          </div>
-          <button class="text-button" data-view="learn">All lessons →</button>
-        </div>
-        <div id="nextLessonCard"></div>
-      </section>
-
-      <section class="feature-grid section-block">
-        <article>
-          <span class="feature-index">01</span>
-          <h3>Learn in context</h3>
-          <p>Words arrive inside phrases and situations, not isolated lists.</p>
-        </article>
-        <article>
-          <span class="feature-index">02</span>
-          <h3>See the system</h3>
-          <p>Grammar is explained simply, then used immediately.</p>
-        </article>
-        <article>
-          <span class="feature-index">03</span>
-          <h3>Keep what matters</h3>
-          <p>Review your own vocabulary deck whenever you have five minutes.</p>
-        </article>
-      </section>
-    </template>
-
-    <template id="learnTemplate">
-      <section class="page-intro">
-        <p class="eyebrow">KLAR / CURRICULUM</p>
-        <h1>A1, from the ground up.</h1>
-        <p class="lede">
-          Thirty compact lessons covering the language you need to introduce
-          yourself, navigate daily life, and make simple plans.
-        </p>
-        <div class="course-meter">
-          <div>
-            <span id="courseProgressLabel">0 of 30 complete</span
-            ><span id="courseProgressPercent">0%</span>
-          </div>
-          <i><b id="courseProgressBar"></b></i>
-        </div>
-      </section>
-      <section id="curriculum" class="curriculum"></section>
-    </template>
-
-    <template id="reviewTemplate">
-      <section class="page-intro review-intro">
-        <p class="eyebrow">YOUR WORD BANK</p>
-        <h1>Keep it close.</h1>
-        <p class="lede">
-          Review words from the lessons you have opened. Say the answer before
-          turning the card.
-        </p>
-      </section>
-      <section class="review-layout">
-        <article
-          class="flashcard"
-          id="flashcard"
-          tabindex="0"
-          role="button"
-          aria-label="Flip flashcard"
+    <div id="onboardingRoot"></div>
+    <div id="productRoot" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#dashboard"
+          ><span class="brand-mark"><i></i><i></i><i></i></span>Klar</a
         >
-          <div class="flashcard-inner">
-            <div class="flashcard-face flashcard-front">
-              <span id="flashGenderDot" class="dot das"></span>
-              <p class="card-label">GERMAN</p>
-              <h2 id="flashGerman">Hallo</h2>
-              <button
-                class="speaker small-speaker"
-                data-speak-target="flashGerman"
-                aria-label="Listen to word"
-              >
-                ◖))</button
-              ><span class="flip-hint">click to reveal</span>
-            </div>
-            <div class="flashcard-face flashcard-back">
-              <p class="card-label">ENGLISH</p>
-              <h2 id="flashEnglish">hello</h2>
-              <p id="flashNote" class="flash-note">greeting</p>
-              <span class="flip-hint">click to return</span>
-            </div>
+        <nav class="side-nav" aria-label="App navigation">
+          <button data-route="dashboard"><span>◫</span> Home</button>
+          <button data-route="course"><span>□</span> Learn</button>
+          <button data-route="review"><span>◇</span> Review</button>
+          <button data-route="practice"><span>◌</span> Pronounce</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <button class="settings-link" data-action="restart">
+            Reset setup
+          </button>
+          <p>German, made clear.</p>
+        </div>
+      </aside>
+      <section class="app-shell">
+        <header class="topbar">
+          <div>
+            <p class="topbar-label" id="topbarLabel">YOUR GERMAN SPACE</p>
+            <h1 id="topbarTitle">Hello</h1>
           </div>
-        </article>
-        <aside class="review-side">
-          <p class="eyebrow">REVIEW DECK</p>
-          <div class="review-count">
-            <b id="deckPosition">01</b><span>/</span><b id="deckTotal">00</b>
-          </div>
-          <p id="deckStatus">Start with the words from your first lesson.</p>
-          <div class="review-controls">
-            <button class="button button-outline" id="previousCard">←</button
-            ><button class="button button-signal" id="nextCard">
-              Next word →
+          <div class="topbar-meta">
+            <span id="levelBadge">A1</span
+            ><button
+              class="avatar-button"
+              data-route="progress"
+              id="avatarButton"
+            >
+              K
             </button>
           </div>
-        </aside>
+        </header>
+        <main id="app" class="app-content" tabindex="-1"></main>
       </section>
-    </template>
-
-    <template id="practiceTemplate">
-      <section class="page-intro">
-        <p class="eyebrow">PRONUNCIATION TOOL</p>
-        <h1>Type it.<br /><em>Hear it.</em></h1>
-        <p class="lede">
-          Paste or type any German word or phrase. Klar will use your browser’s
-          German voice to say it aloud.
-        </p>
-      </section>
-      <section class="pronunciation-tool technical-panel">
-        <label for="pronunciationInput">GERMAN INPUT</label>
-        <textarea
-          id="pronunciationInput"
-          rows="4"
-          lang="de"
-          placeholder="z. B. Wie geht es dir?"
-        ></textarea>
-        <div class="pronunciation-actions">
-          <button class="button button-signal" id="pronounceButton">
-            Play pronunciation <span>▶</span></button
-          ><button class="button button-outline" id="slowPronounceButton">
-            Play slowly
-          </button>
-        </div>
-        <p class="tool-note">
-          Tip: use short phrases, listen twice, then repeat out loud. Your
-          browser needs speech synthesis enabled.
-        </p>
-      </section>
-      <section class="quick-phrases">
-        <p class="eyebrow">TRY ONE</p>
-        <div id="quickPhrases"></div>
-      </section>
-    </template>
-
-    <template id="progressTemplate">
-      <section class="page-intro">
-        <p class="eyebrow">YOUR COURSE READOUT</p>
-        <h1>Quiet progress.<br /><em>Real progress.</em></h1>
-      </section>
-      <section class="progress-grid">
-        <article class="metric-card">
-          <span>LESSONS COMPLETE</span><b id="metricLessons">00</b
-          ><small>/ 30</small>
-        </article>
-        <article class="metric-card">
-          <span>WORDS IN REVIEW</span><b id="metricWords">000</b>
-        </article>
-        <article class="metric-card">
-          <span>COURSE PROGRESS</span><b id="metricPercent">00%</b>
-        </article>
-      </section>
-      <section class="progress-visual">
-        <div class="section-title">
-          <div>
-            <p class="eyebrow">A1 COURSE MAP</p>
-            <h2>Every lesson counts.</h2>
-          </div>
-        </div>
-        <div id="progressDots" class="progress-dots"></div>
-      </section>
-      <section class="reset-zone">
-        <p>Need a fresh start? This only clears data stored in this browser.</p>
-        <button id="resetProgress" class="text-button danger">
-          Reset local progress
-        </button>
-      </section>
-    </template>
-
+      <nav class="mobile-nav" aria-label="Mobile navigation">
+        <button data-route="dashboard">Home</button
+        ><button data-route="course">Learn</button
+        ><button data-route="review">Review</button
+        ><button data-route="practice">Speak</button>
+      </nav>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
     <script src="data.js"></script>
     <script src="a2-data.js"></script>
     <script src="app.js"></script>
-  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2199e410dcca346',t:'MTc4NTEzNDA2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a21ae4f12d90455c',t:'MTc4NTE0NzQ0NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

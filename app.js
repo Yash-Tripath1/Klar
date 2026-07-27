@@ -1,26 +1,12 @@
-/* Klar application shell. State is browser-local by design, so the prototype works without accounts or a server. */
+const onboardingRoot = document.querySelector("#onboardingRoot");
+const productRoot = document.querySelector("#productRoot");
 const app = document.querySelector("#app");
-const templates = {
-  home: document.querySelector("#homeTemplate"),
-  learn: document.querySelector("#learnTemplate"),
-  review: document.querySelector("#reviewTemplate"),
-  practice: document.querySelector("#practiceTemplate"),
-  progress: document.querySelector("#progressTemplate"),
-};
-
-const allLessons = COURSE.flatMap((unit) =>
-  unit.lessons.map((lesson) => ({
-    ...lesson,
-    unit: unit.unit,
-    unitTitle: unit.title,
-  })),
-);
 const stored = JSON.parse(localStorage.getItem("klar-state") || "{}");
+
 const state = {
+  profile: stored.profile || null,
   completed: stored.completed || [],
   opened: stored.opened || [],
-  theme: stored.theme || "light",
-  level: stored.level || "A1",
   deckIndex: 0,
 };
 
@@ -28,20 +14,48 @@ function saveState() {
   localStorage.setItem(
     "klar-state",
     JSON.stringify({
+      profile: state.profile,
       completed: state.completed,
       opened: state.opened,
-      theme: state.theme,
-      level: state.level,
     }),
   );
 }
 
-function coursePercent() {
-  return Math.round((state.completed.length / allLessons.length) * 100);
+function activeCourse() {
+  return state.profile?.level === "A2" ? A2_COURSE : COURSE;
+}
+
+function lessons() {
+  return activeCourse().flatMap((unit) =>
+    unit.lessons.map((lesson) => ({
+      ...lesson,
+      unit: unit.unit,
+      unitTitle: unit.title,
+    })),
+  );
+}
+
+function isCompleted(id) {
+  return state.completed.some(
+    (completedId) => String(completedId) === String(id),
+  );
+}
+
+function percent() {
+  const total = lessons().length;
+  return total
+    ? Math.round(
+        (state.completed.filter((id) =>
+          lessons().some((lesson) => String(lesson.id) === String(id)),
+        ).length /
+          total) *
+          100,
+      )
+    : 0;
 }
 
 function knownWords() {
-  return allLessons
+  return lessons()
     .filter((lesson) => state.opened.includes(lesson.id))
     .flatMap((lesson) =>
       lesson.vocab.map(([german, english, gender]) => ({
@@ -53,250 +67,188 @@ function knownWords() {
     );
 }
 
-function mountTemplate(name) {
-  app.replaceChildren(templates[name].content.cloneNode(true));
-  app.focus({ preventScroll: true });
+function toast(message) {
+  const element = document.querySelector("#toast");
+  element.textContent = message;
+  element.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => element.classList.remove("show"), 2600);
 }
 
-function renderHome() {
-  mountTemplate("home");
-  document.querySelector("#homeLessonsDone").textContent = String(
-    state.completed.length,
-  ).padStart(2, "0");
-  document.querySelector("#homeWordsSeen").textContent = String(
-    knownWords().length,
-  ).padStart(3, "0");
-  document.querySelectorAll("[data-select-level]").forEach((button) => {
-    button.classList.toggle(
-      "active",
-      button.dataset.selectLevel === state.level,
-    );
-  });
+function renderOnboarding(step = 1) {
+  productRoot.hidden = true;
+  onboardingRoot.hidden = false;
 
-  const next =
-    allLessons.find((lesson) => !state.completed.includes(lesson.id)) ||
-    allLessons[allLessons.length - 1];
-  document.querySelector("#nextLessonCard").innerHTML = lessonCard(next, true);
-}
-
-function lessonCard(lesson, featured = false) {
-  const isDone = state.completed.includes(lesson.id);
-  return `
-    <article class="lesson-card ${featured ? "featured-card" : ""}">
-      <div class="lesson-card-top"><span>${lesson.unit} / ${String(lesson.id).padStart(2, "0")}</span><span class="status ${isDone ? "done" : ""}">${isDone ? "COMPLETE" : "READY"}</span></div>
-      <div class="lesson-card-body"><p class="lesson-unit">${lesson.unitTitle}</p><h3>${lesson.title}</h3><p>${lesson.goal}</p></div>
-      <button class="button ${featured ? "button-signal" : "button-outline"}" data-open-lesson="${lesson.id}">${isDone ? "Open again" : "Start lesson"} <span>→</span></button>
-    </article>`;
-}
-
-function renderLearn() {
-  if (state.level === "A2") {
-    renderA2Roadmap();
+  if (step === 1) {
+    onboardingRoot.innerHTML = `
+      <main class="welcome-screen">
+        <section class="welcome-panel">
+          <a class="welcome-brand" href="#">Klar<span></span></a>
+          <div class="welcome-copy">
+            <p class="eyebrow">A CALMER WAY TO LEARN GERMAN</p>
+            <h1>Let’s make this<br /><em>your</em> space.</h1>
+            <p>Three quick questions, then we will set up a course that fits where you are right now.</p>
+          </div>
+          <form id="profileForm" class="setup-form">
+            <label>What should we call you?<input name="nickname" autocomplete="nickname" maxlength="24" placeholder="Your nickname" required /></label>
+            <label>How old are you?<input name="age" inputmode="numeric" min="8" max="120" type="number" placeholder="Your age" required /></label>
+            <fieldset><legend>Where are you starting?</legend><div class="level-choice"><label><input type="radio" name="level" value="A1" checked /><span><b>A1</b><small>I’m starting from scratch</small></span></label><label><input type="radio" name="level" value="A2" /><span><b>A2</b><small>I know the basics already</small></span></label></div></fieldset>
+            <button class="primary-button" type="submit">Create my learning space <span>→</span></button>
+          </form>
+          <p class="welcome-note">Your answers stay in this browser. No account needed to begin.</p>
+        </section>
+        <aside class="welcome-aside"><div class="aside-orb"></div><p>KLAR / PERSONAL SETUP</p><blockquote>“A language grows through small, clear moments.”</blockquote></aside>
+      </main>`;
     return;
   }
 
-  mountTemplate("learn");
-  document.querySelector("#courseProgressLabel").textContent =
-    `${state.completed.length} of ${allLessons.length} complete`;
-  document.querySelector("#courseProgressPercent").textContent =
-    `${coursePercent()}%`;
-  requestAnimationFrame(() => {
-    document.querySelector("#courseProgressBar").style.width =
-      `${coursePercent()}%`;
-  });
+  onboardingRoot.innerHTML = `
+    <main class="customising-screen"><div class="loading-mark"><i></i><i></i><i></i></div><p class="eyebrow">SETTING UP YOUR KLAR SPACE</p><h1>Customising your<br />learning path.</h1><p>Choosing your ${state.profile.level} course, preparing your first lesson, and building your review deck.</p><div class="loading-line"><i></i></div></main>`;
 
-  document.querySelector("#curriculum").innerHTML = COURSE.map(
-    (unit) => `
-    <section class="unit-block">
-      <header class="unit-header"><div><span>${unit.unit}</span><h2>${unit.title}</h2></div><p>${unit.lessons.filter((lesson) => state.completed.includes(lesson.id)).length} / ${unit.lessons.length} complete</p></header>
-      <div class="lesson-grid">${unit.lessons.map((lesson) => lessonCard(lesson)).join("")}</div>
-    </section>`,
-  ).join("");
+  setTimeout(() => {
+    onboardingRoot.hidden = true;
+    productRoot.hidden = false;
+    route("dashboard");
+  }, 1200);
 }
 
-function renderA2Roadmap() {
+function updateChrome(title, label = "YOUR GERMAN SPACE") {
+  document.querySelector("#topbarTitle").textContent = title;
+  document.querySelector("#topbarLabel").textContent = label;
+  document.querySelector("#levelBadge").textContent = state.profile.level;
+  document.querySelector("#avatarButton").textContent = state.profile.nickname
+    .charAt(0)
+    .toUpperCase();
+}
+
+function route(name) {
+  if (!state.profile) return renderOnboarding();
+  const views = {
+    dashboard: renderDashboard,
+    course: renderCourse,
+    review: renderReview,
+    practice: renderPractice,
+    progress: renderProgress,
+  };
+  (views[name] || renderDashboard)();
+  history.replaceState(null, "", `#${name}`);
+  app.focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderDashboard() {
+  updateChrome(`Hallo, ${state.profile.nickname}.`);
+  const courseLessons = lessons();
+  const next =
+    courseLessons.find((lesson) => !isCompleted(lesson.id)) ||
+    courseLessons[courseLessons.length - 1];
   app.innerHTML = `
-    <section class="page-intro a2-intro">
-      <p class="eyebrow">KLAR / A2 ROADMAP</p>
-      <h1>Make German<br /><em>more yours.</em></h1>
-      <p class="lede">A2 is where you stop assembling survival phrases and start handling everyday life with more independence. The complete A2 lesson library is the next content release.</p>
-      <button class="button button-outline" data-select-level="A1">← Switch to A1 course</button>
+    <section class="dashboard-hero">
+      <div><p class="eyebrow">${state.profile.level} · YOUR LEARNING PATH</p><h2>One useful phrase<br />at a time.</h2><p class="dashboard-lede">Keep it simple today. A few focused minutes are enough to move forward.</p><button class="primary-button" data-open-lesson="${next.id}">${isCompleted(next.id) ? "Revisit a lesson" : "Continue lesson"} <span>→</span></button></div>
+      <div class="daily-card"><div class="daily-card-top"><span>THIS COURSE</span><b>${percent()}%</b></div><div class="progress-track"><i style="width:${percent()}%"></i></div><p><strong>${state.completed.filter((id) => courseLessons.some((lesson) => String(lesson.id) === String(id))).length}</strong> of ${courseLessons.length} lessons complete</p><div class="daily-note"><span>Next up</span><b>${next.title}</b></div></div>
     </section>
-    <section class="a2-roadmap">
-      ${A2_ROADMAP.map(
-        (unit) => `
-        <article class="a2-unit-card">
-          <p>${unit.unit}</p>
-          <h2>${unit.title}</h2>
-          <ol>${unit.lessons.map((lesson) => `<li>${lesson}</li>`).join("")}</ol>
-          <span>5 lessons planned</span>
-        </article>`,
-      ).join("")}
-      <div class="a2-note"><strong>A2 is mapped.</strong><span>Next: lesson writing, native audio, and exercises.</span></div>
-    </section>`;
+    <section class="dashboard-grid"><article class="next-card"><div class="card-kicker">NEXT LESSON</div><p class="lesson-tag">${next.unit} · Lesson ${String(next.id).replace("a2-", "")}</p><h3>${next.title}</h3><p>${next.goal}</p><button class="inline-button" data-open-lesson="${next.id}">Open lesson →</button></article><article class="mini-card"><span class="mini-icon">◌</span><p>Pronunciation</p><h3>Say it out loud.</h3><p>Type any German word or phrase and hear it spoken naturally.</p><button class="inline-button" data-route="practice">Open tool →</button></article><article class="mini-card"><span class="mini-icon">◇</span><p>Review deck</p><h3>${knownWords().length} words ready.</h3><p>Short reviews help new vocabulary stay with you.</p><button class="inline-button" data-route="review">Review words →</button></article></section>
+    <section class="unit-overview"><div class="section-heading"><div><p class="eyebrow">YOUR COURSE</p><h2>What comes next.</h2></div><button class="quiet-button" data-route="course">See all lessons</button></div><div class="unit-pills">${activeCourse()
+      .map((unit) => `<span>${unit.unit} <b>${unit.title}</b></span>`)
+      .join("")}</div></section>`;
+}
+
+function renderCourse() {
+  updateChrome(`${state.profile.level} course`, "YOUR CURRICULUM");
+  const courseLessons = lessons();
+  app.innerHTML = `<section class="course-intro"><p class="eyebrow">${state.profile.level} COURSE · ${courseLessons.length} LESSONS</p><h2>A path you can<br />actually follow.</h2><p>Short lessons, useful language, and a clear next step every time.</p><div class="course-progress"><span>${state.completed.filter((id) => courseLessons.some((lesson) => String(lesson.id) === String(id))).length} of ${courseLessons.length} complete</span><div><i style="width:${percent()}%"></i></div><b>${percent()}%</b></div></section><div class="units">${activeCourse()
+    .map((unit) => unitMarkup(unit))
+    .join("")}</div>`;
+}
+
+function unitMarkup(unit) {
+  const done = unit.lessons.filter((lesson) => isCompleted(lesson.id)).length;
+  return `<section class="course-unit"><header><div><p>${unit.unit}</p><h3>${unit.title}</h3></div><span>${done}/${unit.lessons.length}</span></header><div class="lesson-list">${unit.lessons.map((lesson) => `<button class="lesson-row ${isCompleted(lesson.id) ? "is-complete" : ""}" data-open-lesson="${lesson.id}"><span>${isCompleted(lesson.id) ? "✓" : String(lesson.id).replace("a2-", "").padStart(2, "0")}</span><div><b>${lesson.title}</b><small>${lesson.goal}</small></div><i>→</i></button>`).join("")}</div></section>`;
 }
 
 function renderLesson(lessonId) {
-  const lesson = allLessons.find((item) => item.id === Number(lessonId));
-  if (!lesson) return renderHome();
+  const lesson = lessons().find((item) => String(item.id) === String(lessonId));
+  if (!lesson) return route("course");
   if (!state.opened.includes(lesson.id)) {
     state.opened.push(lesson.id);
     saveState();
   }
-
-  const [question, answer, distractors] = lesson.quiz;
-  app.innerHTML = `
-    <section class="lesson-page">
-      <button class="back-button" data-view="learn">← All lessons</button>
-      <div class="lesson-header"><div><p class="eyebrow">${lesson.unit} · LESSON ${String(lesson.id).padStart(2, "0")}</p><h1>${lesson.title}</h1><p class="lede">${lesson.goal}</p></div><span class="lesson-number">${String(lesson.id).padStart(2, "0")}</span></div>
-      <div class="lesson-content">
-        <section class="lesson-explain technical-panel"><p class="eyebrow">CORE IDEA</p><p class="grammar-copy">${lesson.grammar}</p><div class="phrase-card"><p class="card-label">USEFUL PHRASE</p><h2 lang="de" id="lessonPhrase">${lesson.phrase}</h2><p>${lesson.translation}</p><button class="speaker" data-speak-target="lessonPhrase" aria-label="Listen to phrase">◖))</button></div></section>
-        <section class="vocabulary-section"><div class="section-title"><div><p class="eyebrow">VOCABULARY</p><h2>Keep these.</h2></div><span class="micro-label">TAP TO HEAR</span></div><div class="vocab-list">${lesson.vocab
-          .map(
-            ([german, english, gender]) => `
-          <button class="vocab-item" data-speak="${german}" lang="de"><span class="dot ${gender || "neutral"}"></span><b>${german}</b><span>${english}</span><i>◖))</i></button>`,
-          )
-          .join("")}</div></section>
-        <section class="quiz-section"><p class="eyebrow">CHECK YOURSELF</p><h2>${question}</h2><div class="quiz-options">${shuffle(
-          [answer, ...distractors],
-        )
-          .map(
-            (option) =>
-              `<button data-quiz-option="${escapeHtml(option)}" data-answer="${escapeHtml(answer)}">${option}</button>`,
-          )
-          .join(
-            "",
-          )}</div><p id="quizFeedback" class="quiz-feedback" aria-live="polite"></p></section>
-      </div>
-      <div class="lesson-footer"><button class="button button-outline" data-speak="${lesson.phrase}">Hear phrase again</button><button class="button button-signal" id="completeLesson">${state.completed.includes(lesson.id) ? "Lesson complete" : "Mark lesson complete"} <span>✓</span></button></div>
-    </section>`;
+  updateChrome(
+    lesson.title,
+    `${lesson.unit} · LESSON ${String(lesson.id).replace("a2-", "").padStart(2, "0")}`,
+  );
+  const [question, answer, wrong] = lesson.quiz;
+  app.innerHTML = `<button class="back-link" data-route="course">← Back to course</button><article class="lesson-view"><header><span>${lesson.unit}</span><h2>${lesson.title}</h2><p>${lesson.goal}</p></header><section class="focus-card"><div><p class="eyebrow">THE IDEA</p><p class="grammar-note">${lesson.grammar}</p></div><div class="phrase-box"><p class="eyebrow">SAY THIS</p><h3 id="lessonPhrase" lang="de">${lesson.phrase}</h3><p>${lesson.translation}</p><button class="listen-button" data-speak-target="lessonPhrase">Listen <span>◖))</span></button></div></section><section class="lesson-section"><div class="section-heading"><div><p class="eyebrow">WORDS TO KEEP</p><h2>Build your bank.</h2></div><span class="hint">Tap a word to hear it</span></div><div class="word-grid">${lesson.vocab.map(([german, english, gender]) => `<button class="word-card" data-speak="${german}"><i class="gender-dot ${gender || "neutral"}"></i><b>${german}</b><span>${english}</span><em>◖))</em></button>`).join("")}</div></section><section class="check-card"><p class="eyebrow">QUICK CHECK</p><h3>${question}</h3><div class="answer-grid">${shuffle(
+    [answer, ...wrong],
+  )
+    .map(
+      (option) =>
+        `<button data-quiz="${escapeHtml(option)}" data-answer="${escapeHtml(answer)}">${option}</button>`,
+    )
+    .join(
+      "",
+    )}</div><p id="answerFeedback" aria-live="polite"></p></section><footer class="lesson-actions"><button class="quiet-button" data-speak="${lesson.phrase}">Hear the phrase again</button><button class="primary-button" data-complete="${lesson.id}">${isCompleted(lesson.id) ? "Lesson complete ✓" : "Complete lesson"}</button></footer></article>`;
 }
 
 function renderReview() {
-  mountTemplate("review");
+  updateChrome("Review", "YOUR WORD BANK");
   const deck = knownWords();
-  const card = document.querySelector("#flashcard");
-  if (!deck.length) {
-    document.querySelector("#flashGerman").textContent = "Open a lesson first";
-    document.querySelector("#flashEnglish").textContent =
-      "Your review words will appear here.";
-    document.querySelector("#deckPosition").textContent = "00";
-    document.querySelector("#deckTotal").textContent = "00";
-    document.querySelector("#deckStatus").textContent =
-      "Learn a lesson, then come back to practise.";
-    return;
-  }
-  state.deckIndex %= deck.length;
-  const updateCard = () => {
-    const word = deck[state.deckIndex];
-    document.querySelector("#flashGerman").textContent = word.german;
-    document.querySelector("#flashEnglish").textContent = word.english;
-    document.querySelector("#flashNote").textContent = word.note;
-    document.querySelector("#flashGenderDot").className =
-      `dot ${word.gender || "neutral"}`;
-    document.querySelector("#deckPosition").textContent = String(
-      state.deckIndex + 1,
-    ).padStart(2, "0");
-    document.querySelector("#deckTotal").textContent = String(
-      deck.length,
-    ).padStart(2, "0");
-    card.classList.remove("flipped");
+  app.innerHTML = `<section class="tool-header"><p class="eyebrow">YOUR REVIEW DECK</p><h2>Keep the useful<br />words close.</h2><p>Say the answer out loud before you reveal it.</p></section><section class="review-screen"><button class="study-card" id="studyCard"><div class="study-card-inner"><div class="study-face study-front"><span id="cardGender" class="gender-dot neutral"></span><p>GERMAN</p><h3 id="cardGerman">${deck[0]?.german || "Open a lesson first"}</h3><button class="listen-button" id="cardListen">Listen <span>◖))</span></button><small>Tap to reveal</small></div><div class="study-face study-back"><p>ENGLISH</p><h3 id="cardEnglish">${deck[0]?.english || "Your words will appear here."}</h3><span id="cardNote">${deck[0]?.note || ""}</span><small>Tap to return</small></div></div></button><aside class="review-panel"><p class="eyebrow">IN THIS DECK</p><strong id="cardCount">${deck.length} word${deck.length === 1 ? "" : "s"}</strong><p id="reviewMessage">${deck.length ? "Take your time. Recall is the point." : "Learn a lesson to start your deck."}</p><div><button class="quiet-button" id="previousCard">←</button><button class="primary-button" id="nextCard">Next word →</button></div></aside></section>`;
+  if (!deck.length) return;
+  let index = state.deckIndex % deck.length;
+  const update = () => {
+    const word = deck[index];
+    document.querySelector("#cardGerman").textContent = word.german;
+    document.querySelector("#cardEnglish").textContent = word.english;
+    document.querySelector("#cardNote").textContent = word.note;
+    document.querySelector("#cardGender").className =
+      `gender-dot ${word.gender || "neutral"}`;
+    document.querySelector("#studyCard").classList.remove("flipped");
   };
-  updateCard();
-  card.addEventListener("click", () => card.classList.toggle("flipped"));
-  document.querySelector("#nextCard").addEventListener("click", () => {
-    state.deckIndex = (state.deckIndex + 1) % deck.length;
-    updateCard();
-  });
-  document.querySelector("#previousCard").addEventListener("click", () => {
-    state.deckIndex = (state.deckIndex - 1 + deck.length) % deck.length;
-    updateCard();
-  });
+  document.querySelector("#studyCard").onclick = () =>
+    document.querySelector("#studyCard").classList.toggle("flipped");
+  document.querySelector("#cardListen").onclick = (event) => {
+    event.stopPropagation();
+    speak(deck[index].german);
+  };
+  document.querySelector("#nextCard").onclick = () => {
+    index = (index + 1) % deck.length;
+    state.deckIndex = index;
+    update();
+  };
+  document.querySelector("#previousCard").onclick = () => {
+    index = (index - 1 + deck.length) % deck.length;
+    state.deckIndex = index;
+    update();
+  };
 }
 
 function renderPractice() {
-  mountTemplate("practice");
+  updateChrome("Pronounce", "SAY IT OUT LOUD");
+  app.innerHTML = `<section class="tool-header"><p class="eyebrow">PRONUNCIATION SPACE</p><h2>Type it.<br /><em>Hear it.</em></h2><p>Use this for any German word or phrase you meet—not just the course content.</p></section><section class="pronounce-card"><label for="pronunciationInput">GERMAN WORD OR PHRASE</label><textarea id="pronunciationInput" lang="de" placeholder="Wie geht es dir?"></textarea><div><button class="primary-button" id="speakNormal">Play pronunciation <span>▶</span></button><button class="quiet-button" id="speakSlow">Play slowly</button></div><p>Listen once, repeat slowly, then try it at normal speed.</p></section><section class="phrase-suggestions"><p class="eyebrow">TRY A PHRASE</p>${["Guten Morgen!", "Ich lerne Deutsch.", "Können Sie das bitte wiederholen?", "Wo ist der Bahnhof?", "Das klingt interessant."].map((phrase) => `<button data-phrase="${phrase}">${phrase}<span>◖))</span></button>`).join("")}</section>`;
   const input = document.querySelector("#pronunciationInput");
-  const play = (rate) => speak(input.value, rate);
-  document
-    .querySelector("#pronounceButton")
-    .addEventListener("click", () => play(0.85));
-  document
-    .querySelector("#slowPronounceButton")
-    .addEventListener("click", () => play(0.58));
-  document.querySelector("#quickPhrases").innerHTML = QUICK_PHRASES.map(
-    (phrase) =>
-      `<button data-quick-phrase="${phrase}">${phrase} <span>◖))</span></button>`,
-  ).join("");
+  document.querySelector("#speakNormal").onclick = () =>
+    speak(input.value, 0.84);
+  document.querySelector("#speakSlow").onclick = () => speak(input.value, 0.58);
 }
 
 function renderProgress() {
-  mountTemplate("progress");
-  document.querySelector("#metricLessons").textContent = String(
-    state.completed.length,
-  ).padStart(2, "0");
-  document.querySelector("#metricWords").textContent = String(
-    knownWords().length,
-  ).padStart(3, "0");
-  document.querySelector("#metricPercent").textContent =
-    `${String(coursePercent()).padStart(2, "0")}%`;
-  document.querySelector("#progressDots").innerHTML = allLessons
-    .map(
-      (lesson) =>
-        `<button class="map-dot ${state.completed.includes(lesson.id) ? "complete" : state.opened.includes(lesson.id) ? "opened" : ""}" data-open-lesson="${lesson.id}" title="${lesson.id}. ${lesson.title}">${String(lesson.id).padStart(2, "0")}</button>`,
-    )
-    .join("");
+  updateChrome("Your progress", "YOUR LEARNING SPACE");
+  const courseLessons = lessons();
+  app.innerHTML = `<section class="tool-header"><p class="eyebrow">${state.profile.level} COURSE</p><h2>You are building<br /><em>something real.</em></h2></section><section class="metrics"><article><span>LESSONS COMPLETE</span><b>${state.completed.filter((id) => courseLessons.some((lesson) => String(lesson.id) === String(id))).length}</b><small>of ${courseLessons.length}</small></article><article><span>WORDS EXPLORED</span><b>${knownWords().length}</b><small>in your review deck</small></article><article><span>COURSE PROGRESS</span><b>${percent()}%</b><small>keep the rhythm</small></article></section><section class="map-section"><div class="section-heading"><div><p class="eyebrow">COURSE MAP</p><h2>Your steps.</h2></div></div><div class="lesson-map">${courseLessons.map((lesson) => `<button class="${isCompleted(lesson.id) ? "done" : state.opened.includes(lesson.id) ? "opened" : ""}" data-open-lesson="${lesson.id}" title="${lesson.title}">${String(lesson.id).replace("a2-", "").padStart(2, "0")}</button>`).join("")}</div></section>`;
 }
 
-function speak(text, rate = 0.8) {
+function speak(text, rate = 0.82) {
   if (!text?.trim()) return toast("Type a German word or phrase first.");
   if (!("speechSynthesis" in window))
-    return toast("Speech playback is not available in this browser.");
-  window.speechSynthesis.cancel();
+    return toast("Speech playback is unavailable in this browser.");
+  speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "de-DE";
   utterance.rate = rate;
-  utterance.pitch = 1;
-  window.speechSynthesis.speak(utterance);
+  speechSynthesis.speak(utterance);
 }
 
-function completeLesson() {
-  const lessonId = Number(
-    document
-      .querySelector("#completeLesson")
-      ?.closest(".lesson-page")
-      ?.querySelector(".lesson-number")?.textContent,
-  );
-  if (!lessonId || state.completed.includes(lessonId)) return;
-  state.completed.push(lessonId);
-  state.completed.sort((a, b) => a - b);
-  saveState();
-  document.querySelector("#completeLesson").innerHTML =
-    "Lesson complete <span>✓</span>";
-  toast("Lesson saved to your course progress.");
-  updateHeaderProgress();
-}
-
-function updateHeaderProgress() {
-  document.querySelector(".profile-button").textContent = `${coursePercent()}%`;
-}
-
-function toast(message) {
-  let element = document.querySelector(".toast");
-  if (!element) {
-    element = document.createElement("div");
-    element.className = "toast";
-    document.body.append(element);
-  }
-  element.textContent = message;
-  element.classList.add("show");
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => element.classList.remove("show"), 2400);
-}
-
-function shuffle(items) {
-  return [...items].sort(() => Math.random() - 0.5);
-}
 function escapeHtml(value) {
   return value
     .replace(/&/g, "&amp;")
@@ -304,118 +256,86 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
-
-function route(view) {
-  (
-    ({
-      home: renderHome,
-      learn: renderLearn,
-      review: renderReview,
-      practice: renderPractice,
-      progress: renderProgress,
-    })[view] || renderHome
-  )();
-  history.replaceState(null, "", `#${view}`);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+function shuffle(array) {
+  return [...array].sort(() => Math.random() - 0.5);
 }
 
+document.addEventListener("submit", (event) => {
+  if (event.target.id !== "profileForm") return;
+  event.preventDefault();
+  const data = new FormData(event.target);
+  state.profile = {
+    nickname: data.get("nickname").trim(),
+    age: Number(data.get("age")),
+    level: data.get("level"),
+  };
+  state.completed = [];
+  state.opened = [];
+  saveState();
+  renderOnboarding(2);
+});
+
 document.addEventListener("click", (event) => {
-  const levelButton = event.target.closest("[data-select-level]");
-  if (levelButton) {
-    state.level = levelButton.dataset.selectLevel;
-    saveState();
-    if (levelButton.closest(".level-picker")) {
-      document.querySelectorAll("[data-select-level]").forEach((button) => {
-        button.classList.toggle(
-          "active",
-          button.dataset.selectLevel === state.level,
-        );
-      });
-    } else {
-      renderLearn();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    return;
-  }
-  const actionButton = event.target.closest("[data-action='continue']");
-  if (actionButton) {
-    if (state.level === "A2") {
-      renderLearn();
-    } else {
-      const nextLesson =
-        allLessons.find((lesson) => !state.completed.includes(lesson.id)) ||
-        allLessons[0];
-      renderLesson(nextLesson.id);
-    }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-  const viewButton = event.target.closest("[data-view]");
-  if (viewButton) {
-    route(viewButton.dataset.view);
-    return;
-  }
-  const openButton = event.target.closest("[data-open-lesson]");
-  if (openButton) {
-    renderLesson(openButton.dataset.openLesson);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
+  const routeButton = event.target.closest("[data-route]");
+  if (routeButton) return route(routeButton.dataset.route);
+  const lessonButton = event.target.closest("[data-open-lesson]");
+  if (lessonButton) return renderLesson(lessonButton.dataset.openLesson);
   const speakButton = event.target.closest("[data-speak], [data-speak-target]");
-  if (speakButton) {
-    const text =
+  if (speakButton)
+    return speak(
       speakButton.dataset.speak ||
-      document.querySelector(`#${speakButton.dataset.speakTarget}`)
-        ?.textContent;
-    speak(text);
-    return;
+        document.querySelector(`#${speakButton.dataset.speakTarget}`)
+          ?.textContent,
+    );
+  const phrase = event.target.closest("[data-phrase]");
+  if (phrase) {
+    document.querySelector("#pronunciationInput").value = phrase.dataset.phrase;
+    return speak(phrase.dataset.phrase);
   }
-  const quick = event.target.closest("[data-quick-phrase]");
-  if (quick) {
-    document.querySelector("#pronunciationInput").value =
-      quick.dataset.quickPhrase;
-    speak(quick.dataset.quickPhrase);
-    return;
-  }
-  const quiz = event.target.closest("[data-quiz-option]");
-  if (quiz) {
-    const correct =
-      quiz.dataset.quizOption.toLowerCase() ===
-      quiz.dataset.answer.toLowerCase();
-    document.querySelectorAll("[data-quiz-option]").forEach((button) => {
+  const answer = event.target.closest("[data-quiz]");
+  if (answer) {
+    const correct = answer.dataset.quiz === answer.dataset.answer;
+    document.querySelectorAll("[data-quiz]").forEach((button) => {
       button.disabled = true;
-      if (
-        button.dataset.quizOption.toLowerCase() ===
-        button.dataset.answer.toLowerCase()
-      )
+      if (button.dataset.quiz === button.dataset.answer)
         button.classList.add("correct");
     });
-    if (!correct) quiz.classList.add("incorrect");
-    document.querySelector("#quizFeedback").textContent = correct
-      ? "Correct. Keep going."
-      : `Not quite — the answer is “${quiz.dataset.answer}”.`;
+    if (!correct) answer.classList.add("wrong");
+    document.querySelector("#answerFeedback").textContent = correct
+      ? "Correct. Nice work."
+      : `Not quite — “${answer.dataset.answer}” is the answer.`;
     return;
   }
-  if (event.target.closest("#completeLesson")) {
-    completeLesson();
+  const complete = event.target.closest("[data-complete]");
+  if (complete) {
+    const id = complete.dataset.complete;
+    if (!isCompleted(id) && !state.completed.includes(Number(id))) {
+      state.completed.push(id);
+      saveState();
+      toast("Lesson complete. Your progress is saved.");
+    }
+    complete.textContent = "Lesson complete ✓";
     return;
   }
-  if (event.target.closest("#resetProgress")) {
-    if (confirm("Clear all Klar progress stored in this browser?")) {
+  if (event.target.closest("[data-action='restart']")) {
+    if (
+      confirm(
+        "Start Klar setup again? Your local course progress will be cleared.",
+      )
+    ) {
+      localStorage.removeItem("klar-state");
+      state.profile = null;
       state.completed = [];
       state.opened = [];
-      saveState();
-      route("progress");
-      updateHeaderProgress();
+      renderOnboarding();
     }
   }
 });
 
-document.querySelector("#themeButton").addEventListener("click", () => {
-  state.theme = state.theme === "dark" ? "light" : "dark";
-  document.body.classList.toggle("dark", state.theme === "dark");
-  saveState();
-});
-document.body.classList.toggle("dark", state.theme === "dark");
-updateHeaderProgress();
-route(location.hash.slice(1) || "home");
+if (state.profile) {
+  onboardingRoot.hidden = true;
+  productRoot.hidden = false;
+  route(location.hash.slice(1) || "dashboard");
+} else {
+  renderOnboarding();
+}
