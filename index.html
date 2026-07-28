@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="additions.css" />
   </head>
   <body>
     <div id="onboardingRoot"></div>
@@ -28,6 +29,7 @@
           <button data-route="dashboard"><span>◫</span> Home</button>
           <button data-route="course"><span>□</span> Learn</button>
           <button data-route="review"><span>◇</span> Review</button>
+          <button data-route="alphabet"><span>Ä</span> Alphabet</button>
           <button data-route="practice"><span>◌</span> Pronounce</button>
         </nav>
         <div class="sidebar-bottom">
@@ -37,6 +39,7 @@
           <p>German, made clear.</p>
         </div>
       </aside>
+      <div id="ambientLetters" class="ambient-letters" aria-hidden="true"></div>
       <section class="app-shell">
         <header class="topbar">
           <div>
@@ -56,10 +59,46 @@
         </header>
         <main id="app" class="app-content" tabindex="-1"></main>
       </section>
+      <button
+        id="chatToggle"
+        class="chat-toggle"
+        aria-label="Open conversation coach"
+      >
+        <span>✦</span> Practise
+      </button>
+      <aside
+        id="chatDrawer"
+        class="chat-drawer"
+        aria-label="Klar conversation coach"
+        aria-hidden="true"
+      >
+        <header>
+          <div>
+            <p>KLAR COACH</p>
+            <h2>Practise a little.</h2>
+          </div>
+          <button id="chatClose" aria-label="Close chat">×</button>
+        </header>
+        <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+        <div id="scenarioChips" class="scenario-chips"></div>
+        <form id="chatForm" class="chat-form">
+          <textarea
+            id="chatInput"
+            rows="2"
+            placeholder="Write in German…"
+            lang="de"
+            required
+          ></textarea
+          ><button type="submit" aria-label="Send message">↑</button>
+        </form>
+        <p class="chat-note">
+          Your coach corrects gently and stays at your level.
+        </p>
+      </aside>
       <nav class="mobile-nav" aria-label="Mobile navigation">
         <button data-route="dashboard">Home</button
         ><button data-route="course">Learn</button
-        ><button data-route="review">Review</button
+        ><button data-route="alphabet">ABC</button
         ><button data-route="practice">Speak</button>
       </nav>
     </div>
@@ -67,5 +106,5 @@
     <script src="data.js"></script>
     <script src="a2-data.js"></script>
     <script src="app.js"></script>
-  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a21ae4f12d90455c',t:'MTc4NTE0NzQ0NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a21b062b3ac18aec',t:'MTc4NTE0ODgwNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

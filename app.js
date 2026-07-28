@@ -3,10 +3,49 @@ const productRoot = document.querySelector("#productRoot");
 const app = document.querySelector("#app");
 const stored = JSON.parse(localStorage.getItem("klar-state") || "{}");
 
+const CHAT_CONFIG = {
+  endpoint: window.KLAR_CHAT_ENDPOINT || "http://localhost:11434/api/chat",
+  model: window.KLAR_CHAT_MODEL || "grok-8b-instant",
+};
+
+const ALPHABET = [
+  ["A a", "ah", "Apfel"],
+  ["B b", "beh", "Brot"],
+  ["C c", "tseh", "Café"],
+  ["D d", "deh", "Danke"],
+  ["E e", "eh", "Essen"],
+  ["F f", "eff", "Frau"],
+  ["G g", "geh", "gut"],
+  ["H h", "hah", "Haus"],
+  ["I i", "ee", "ich"],
+  ["J j", "yot", "ja"],
+  ["K k", "kah", "Kaffee"],
+  ["L l", "ell", "Liebe"],
+  ["M m", "emm", "Mann"],
+  ["N n", "enn", "Name"],
+  ["O o", "oh", "oder"],
+  ["P p", "peh", "bitte"],
+  ["Q q", "koo", "Quelle"],
+  ["R r", "err", "rot"],
+  ["S s", "ess", "Sonne"],
+  ["T t", "teh", "Tag"],
+  ["U u", "oo", "Uhr"],
+  ["V v", "fow", "Vater"],
+  ["W w", "veh", "Wasser"],
+  ["X x", "iks", "Taxi"],
+  ["Y y", "üpsilon", "Yoga"],
+  ["Z z", "tsett", "Zeit"],
+  ["Ä ä", "eh", "Äpfel"],
+  ["Ö ö", "ur", "Öl"],
+  ["Ü ü", "ue", "über"],
+  ["ẞ ß", "ess-tsett", "Straße"],
+];
+
 const state = {
   profile: stored.profile || null,
   completed: stored.completed || [],
   opened: stored.opened || [],
+  chat: stored.chat || [],
   deckIndex: 0,
 };
 
@@ -17,6 +56,7 @@ function saveState() {
       profile: state.profile,
       completed: state.completed,
       opened: state.opened,
+      chat: state.chat,
     }),
   );
 }
@@ -108,6 +148,7 @@ function renderOnboarding(step = 1) {
   setTimeout(() => {
     onboardingRoot.hidden = true;
     productRoot.hidden = false;
+    createAmbientLetters();
     route("dashboard");
   }, 1200);
 }
@@ -127,6 +168,7 @@ function route(name) {
     dashboard: renderDashboard,
     course: renderCourse,
     review: renderReview,
+    alphabet: renderAlphabet,
     practice: renderPractice,
     progress: renderProgress,
   };
@@ -223,6 +265,11 @@ function renderReview() {
   };
 }
 
+function renderAlphabet() {
+  updateChrome("Alphabet", "SOUNDS & LETTERS");
+  app.innerHTML = `<section class="tool-header alphabet-header"><p class="eyebrow">GERMAN ALPHABET</p><h2>Hear every<br /><em>letter.</em></h2><p>German uses the same base alphabet as English, plus Ä, Ö, Ü, and ß. Tap a card to hear the letter and an example word.</p></section><section class="alphabet-guide"><article><span>Ä</span><div><b>Ä · ä</b><p>Often sounds like the “e” in <em>bed</em>.</p></div></article><article><span>Ö</span><div><b>Ö · ö</b><p>Round your lips as for “oh”, then say “eh”.</p></div></article><article><span>Ü</span><div><b>Ü · ü</b><p>Round your lips as for “oo”, then say “ee”.</p></div></article><article><span>ß</span><div><b>Eszett</b><p>Sounds like a sharp “ss”; it is never at the start of a word.</p></div></article></section><section class="alphabet-grid">${ALPHABET.map(([letter, sound, example]) => `<button data-speak="${letter.replace(" ", "")}. ${example}"><strong>${letter}</strong><span>${sound}</span><small>${example}</small></button>`).join("")}</section>`;
+}
+
 function renderPractice() {
   updateChrome("Pronounce", "SAY IT OUT LOUD");
   app.innerHTML = `<section class="tool-header"><p class="eyebrow">PRONUNCIATION SPACE</p><h2>Type it.<br /><em>Hear it.</em></h2><p>Use this for any German word or phrase you meet—not just the course content.</p></section><section class="pronounce-card"><label for="pronunciationInput">GERMAN WORD OR PHRASE</label><textarea id="pronunciationInput" lang="de" placeholder="Wie geht es dir?"></textarea><div><button class="primary-button" id="speakNormal">Play pronunciation <span>▶</span></button><button class="quiet-button" id="speakSlow">Play slowly</button></div><p>Listen once, repeat slowly, then try it at normal speed.</p></section><section class="phrase-suggestions"><p class="eyebrow">TRY A PHRASE</p>${["Guten Morgen!", "Ich lerne Deutsch.", "Können Sie das bitte wiederholen?", "Wo ist der Bahnhof?", "Das klingt interessant."].map((phrase) => `<button data-phrase="${phrase}">${phrase}<span>◖))</span></button>`).join("")}</section>`;
@@ -271,6 +318,7 @@ document.addEventListener("submit", (event) => {
   };
   state.completed = [];
   state.opened = [];
+  state.chat = [];
   saveState();
   renderOnboarding(2);
 });
@@ -332,9 +380,128 @@ document.addEventListener("click", (event) => {
   }
 });
 
+function createAmbientLetters() {
+  const container = document.querySelector("#ambientLetters");
+  const letters = ["ä", "ö", "ü", "ß", "a", "e", "i", "g", "k", "z"];
+  container.replaceChildren();
+  for (let index = 0; index < 18; index += 1) {
+    const letter = document.createElement("span");
+    letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+    letter.style.left = `${Math.random() * 100}%`;
+    letter.style.top = `${Math.random() * 100}%`;
+    letter.style.animationDelay = `${-Math.random() * 18}s`;
+    letter.style.animationDuration = `${14 + Math.random() * 12}s`;
+    letter.style.fontSize = `${16 + Math.random() * 32}px`;
+    container.append(letter);
+  }
+}
+
+function renderChat() {
+  const messages = document.querySelector("#chatMessages");
+  const scenarios = document.querySelector("#scenarioChips");
+  const history = state.chat.length
+    ? state.chat
+    : [
+        {
+          role: "assistant",
+          content: `Hallo ${state.profile.nickname}! I’m your Klar Coach. Choose a situation, then answer in German—short is perfect.`,
+        },
+      ];
+  messages.innerHTML = history
+    .map(
+      (message) =>
+        `<div class="chat-message ${message.role}">${escapeHtml(message.content)}</div>`,
+    )
+    .join("");
+  scenarios.innerHTML = ["Meet someone", "Order coffee", "Ask directions"]
+    .map(
+      (scenario) => `<button data-scenario="${scenario}">${scenario}</button>`,
+    )
+    .join("");
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function openChat() {
+  const drawer = document.querySelector("#chatDrawer");
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  renderChat();
+}
+
+function closeChat() {
+  const drawer = document.querySelector("#chatDrawer");
+  drawer.classList.remove("open");
+  drawer.setAttribute("aria-hidden", "true");
+}
+
+function coachSystemPrompt() {
+  const words = knownWords()
+    .slice(0, 60)
+    .map((word) => word.german)
+    .join(", ");
+  return `You are Klar Coach, a warm German conversation tutor. The learner is ${state.profile.nickname}, age ${state.profile.age}, studying ${state.profile.level}. Have a short, friendly conversation in simple German appropriate to ${state.profile.level}. Use mostly learned words when possible: ${words || "basic greetings"}. Keep every reply under 55 words. Correct errors gently: first reply naturally, then add one tiny 'Tipp:' correction only when useful. Do not over-explain grammar. Never claim to be a native speaker.`;
+}
+
+async function sendChatMessage(content) {
+  state.chat.push({ role: "user", content });
+  saveState();
+  renderChat();
+  const messages = document.querySelector("#chatMessages");
+  const pending = document.createElement("div");
+  pending.className = "chat-message assistant pending";
+  pending.textContent = "Klar Coach is thinking…";
+  messages.append(pending);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const response = await fetch(CHAT_CONFIG.endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: CHAT_CONFIG.model,
+        stream: false,
+        messages: [
+          { role: "system", content: coachSystemPrompt() },
+          ...state.chat,
+        ],
+      }),
+    });
+    if (!response.ok) throw new Error("Chat request failed");
+    const result = await response.json();
+    const reply = result.message?.content?.trim();
+    if (!reply) throw new Error("No response received");
+    state.chat.push({ role: "assistant", content: reply });
+    saveState();
+    renderChat();
+  } catch (error) {
+    pending.textContent =
+      "Coach is not connected yet. Start Ollama locally, then check the model name in app.js.";
+    pending.classList.remove("pending");
+  }
+}
+
+document.querySelector("#chatToggle").addEventListener("click", openChat);
+document.querySelector("#chatClose").addEventListener("click", closeChat);
+document.querySelector("#chatForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const input = document.querySelector("#chatInput");
+  const message = input.value.trim();
+  if (!message) return;
+  input.value = "";
+  sendChatMessage(message);
+});
+document.querySelector("#scenarioChips").addEventListener("click", (event) => {
+  const scenario = event.target.closest("[data-scenario]")?.dataset.scenario;
+  if (!scenario) return;
+  sendChatMessage(
+    `Let's practise this scenario: ${scenario}. Please start the conversation in German.`,
+  );
+});
+
 if (state.profile) {
   onboardingRoot.hidden = true;
   productRoot.hidden = false;
+  createAmbientLetters();
   route(location.hash.slice(1) || "dashboard");
 } else {
   renderOnboarding();
