@@ -4,8 +4,8 @@ const app = document.querySelector("#app");
 const stored = JSON.parse(localStorage.getItem("klar-state") || "{}");
 
 const CHAT_CONFIG = {
-  endpoint: window.KLAR_CHAT_ENDPOINT || "http://localhost:11434/api/chat",
-  model: window.KLAR_CHAT_MODEL || "grok-8b-instant",
+  // The key stays in api/chat.js on the server. This browser only talks to our own route.
+  endpoint: window.KLAR_CHAT_ENDPOINT || "/api/chat",
 };
 
 const ALPHABET = [
@@ -458,24 +458,21 @@ async function sendChatMessage(content) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: CHAT_CONFIG.model,
-        stream: false,
         messages: [
           { role: "system", content: coachSystemPrompt() },
           ...state.chat,
         ],
       }),
     });
-    if (!response.ok) throw new Error("Chat request failed");
     const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Chat request failed");
     const reply = result.message?.content?.trim();
     if (!reply) throw new Error("No response received");
     state.chat.push({ role: "assistant", content: reply });
     saveState();
     renderChat();
   } catch (error) {
-    pending.textContent =
-      "Coach is not connected yet. Start Ollama locally, then check the model name in app.js.";
+    pending.textContent = `Coach is not connected: ${error.message}`;
     pending.classList.remove("pending");
   }
 }
