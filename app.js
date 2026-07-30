@@ -513,7 +513,6 @@ document.querySelector("#scenarioChips").addEventListener("click", (event) => {
     `Let's practise this scenario: ${scenario}. Please start the conversation in German.`,
   );
 });
-
 if (state.profile) {
   onboardingRoot.hidden = true;
   productRoot.hidden = false;
