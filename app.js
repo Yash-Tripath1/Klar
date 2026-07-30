@@ -357,12 +357,31 @@ document.addEventListener("click", (event) => {
   const complete = event.target.closest("[data-complete]");
   if (complete) {
     const id = complete.dataset.complete;
-    if (!isCompleted(id) && !state.completed.includes(Number(id))) {
+    const courseLessons = lessons();
+    const currentIndex = courseLessons.findIndex(
+      (lesson) => String(lesson.id) === String(id),
+    );
+    const nextLesson = courseLessons[currentIndex + 1];
+
+    if (!isCompleted(id)) {
       state.completed.push(id);
       saveState();
-      toast("Lesson complete. Your progress is saved.");
+      toast("Lesson complete. Opening your next step…");
     }
-    complete.textContent = "Lesson complete ✓";
+
+    complete.disabled = true;
+    complete.textContent = nextLesson
+      ? "Opening next lesson…"
+      : "Course complete ✓";
+
+    window.setTimeout(() => {
+      if (nextLesson) {
+        renderLesson(nextLesson.id);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        route("progress");
+      }
+    }, 650);
     return;
   }
   if (event.target.closest("[data-action='restart']")) {
